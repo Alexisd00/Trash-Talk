@@ -9,6 +9,7 @@ var jumps = 0;
 var obs1, obs2, obs3, obs4, obs5, obs6, obs7;
 var score = 0;
 var recentColl = false;
+var recentCollB = false;
 var money = 0.00;
 var plasticBottle;
 var monospace;
@@ -17,6 +18,8 @@ var lives = 5;
 var heart;
 var eheart;
 var offset;
+var win;
+var won = false;
 
 
 function preload() {
@@ -40,6 +43,7 @@ function preload() {
   obs7 = loadImage("cat-call7.png")
   eheart= loadImage("EmptyHeart23.png")
   heart = loadImage("heart23.png")
+  win = loadImage("winscreen.png")
 }
 
 function keyPressed() {
@@ -82,10 +86,15 @@ function draw() {
       image(lose,0,0,845,350);
       return;
     }
+    if (won == true) {
+      image(win,0,0,845,350);
+      return;
+    }
+    console.log(won);
+
     dis_money();
-    bottleCount();
+    checkWin();
     disBottle();
-    makeBottle();
     showLives();
 
     translate(-person.pos.x+50, 0);
@@ -163,36 +172,12 @@ function dis_money() {
     text("$", 280, 4.5, 650, 250);
 }
 
-function bottleCount() {
-  console.log(score);
-  if (collideRectRect(person.pos.x, person.pos.y-65, 45, 65, 400, height-50, 90, 40) ){
-    if (recentColl == false){
-      recentColl = true;
-      console.log(recentColl)
-      score++;
-      money = money+0.05;
-      window.setTimeout(function(){recentColl = false; }, 1000);
+
+function checkWin() {
+      if (collideRectRect(person.pos.x+12, person.pos.y-65, 30, 65, 6200, height/2, rc.width/4, rc.height/4)){
+      won = true;
     }
-  }
 }
-
-function moneyCount() {
-  console.log(score);
-  if (collideRectRect(person.pos.x, person.pos.y-65, 45, 65, 400, (height-50), 90, 40)) {
-    if (recentColl == false){
-      recentColl = true;
-      console.log(recentColl)
-      money++;
-      window.setTimeout(function(){recentColl = false; }, 1000);
-    }
-  }
-}
-
-function makeBottle() {
-   image(plasticBottle, 480, 0, 15, 58);
-}
-
-
 
 function disBottle() {
   fill(20, 119, 180);
@@ -209,7 +194,7 @@ function display_obstacles() {
   for(var i = 0; i < 6; i++){
     for(var j = 0; j < 7; j++){
       image(obstacles[j], 400*(multiplier), height-50);
-      if (collideRectRect(400*multiplier, (height-50), obstacles[j].width, obstacles[j].height,person.pos.x, person.pos.y-65, 45, 65)) {
+      if (collideRectRect(400*multiplier, (height-50), obstacles[j].width, obstacles[j].height,person.pos.x+12, person.pos.y-65, 30, 65)) {
         if (recentColl == false){
           recentColl = true;
           console.log(recentColl)
@@ -225,8 +210,19 @@ function display_obstacles() {
 
 function showBottles() {
   var index = 0;
+  rect(person.pos.x+12, person.pos.y-65, 30, 60);
   while(index < 20) {
     image(plasticBottle, 700*(index+2),height/2,plasticBottle.width/2,plasticBottle.height/2);
+    if (collideRectRect(person.pos.x+12, person.pos.y-65, 30, 65, 700*(index+2),height/2,plasticBottle.width/2,plasticBottle.height/2) ){
+      if (recentCollB == false){
+        recentCollB = true;
+        console.log(recentColl)
+        score++;
+        money = money+0.05;
+        window.setTimeout(function(){recentCollB = false; }, 1000);
+      }
+    }
+
     index++;
   }
 
@@ -237,5 +233,5 @@ function scoreFrac() {
 }
 
 function strMoney() {
-  return money.toString();
+  return money.toFixed(2);
 }
