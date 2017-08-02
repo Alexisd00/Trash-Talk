@@ -20,6 +20,7 @@ var eheart;
 var offset;
 var win;
 var won = false;
+var collected = {};
 
 
 function preload() {
@@ -210,9 +211,7 @@ function display_obstacles() {
 
 function showBottles() {
   var index = 0;
-  rect(person.pos.x+12, person.pos.y-65, 30, 60);
   while(index < 20) {
-    image(plasticBottle, 700*(index+2),height/2,plasticBottle.width/2,plasticBottle.height/2);
     if (collideRectRect(person.pos.x+12, person.pos.y-65, 30, 65, 700*(index+2),height/2,plasticBottle.width/2,plasticBottle.height/2) ){
       if (recentCollB == false){
         recentCollB = true;
@@ -220,7 +219,11 @@ function showBottles() {
         score++;
         money = money+0.05;
         window.setTimeout(function(){recentCollB = false; }, 1000);
+        collected [index]=true;
       }
+    }
+    if (!collected[index]) {
+      image(plasticBottle, 700*(index+2),height/2,plasticBottle.width/2,plasticBottle.height/2);
     }
 
     index++;
