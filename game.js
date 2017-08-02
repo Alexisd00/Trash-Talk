@@ -21,6 +21,8 @@ var offset;
 var win;
 var won = false;
 var collected = {};
+var ww = windowWidth;
+var wh = windowHeight;
 
 
 function preload() {
@@ -49,18 +51,36 @@ function preload() {
 
 function keyPressed() {
   if ((key === " ") && (jumps<2) && (person.pos.y > 260)){
-      jumps+=1;
+      doJump();
+  }
+}
+
+function mousePressed() {
+    if(won || lost) {
+      won = false;
+      lost = false;
+      lives = 5;
+      score = 0;
+      money = 0;
+      person.pos.x = 0;
+    } else {
+      doJump();
+    }
+}
+
+function doJump() {
+    if((jumps<2) && (person.pos.y > 260)) {
+        jumps+=1;
         var jump = createVector(0, -4);
         person.applyForce(jump);
-
-
-  }
-    console.log(jumps);
+    }
 }
 
 function setup() {
+  ww = windowWidth - 1;
+  wh = windowHeight - 1;
   offset =0;
-  createCanvas(839, 350);
+  createCanvas(ww, wh);
    person = new Person();
 
 }
@@ -68,10 +88,17 @@ function setup() {
 function draw() {
   clear();
   if(millis()<=3000) {
-    image(logo,0,0,845,350)
+    image(logo,0,0,ww,wh)
   }
   else if (millis()<=10000) {
-    image(instructions,0,0,845,350);
+    image(instructions,0,0,ww,wh);
+  }
+  else if (lives == 0) {
+    lost = true;
+    image(lose,0,0,ww,wh);
+  }
+  else if (won == true) {
+    image(win,0,0,ww,wh);
   }
   else {
     rectMode(CORNER);
@@ -79,36 +106,24 @@ function draw() {
     if (offset<=-width){
         offset=0;
     }
-    if (millis()>100000){
-      image(rc, 400, height/2, rc.width/4, rc.height/4);
-    }
-    if (lives == 0) {
-      lost = true;
-      image(lose,0,0,845,350);
-      return;
-    }
-    if (won == true) {
-      image(win,0,0,845,350);
-      return;
-    }
+
     console.log(won);
 
     dis_money();
-    checkWin();
+
     disBottle();
     showLives();
 
     translate(-person.pos.x+50, 0);
     showBottles();
-
+    checkWin();
     image(boy, 6160, height-60);
-    image(rc, 6200, height/2, rc.width/4, rc.height/4);
 
 
     var gravity = createVector(0, 0.1);
     person.applyForce(gravity);
 
-    if (person.pos.y == 350) {
+    if (person.pos.y == wh) {
       jumps =0;
 
     }
@@ -156,8 +171,8 @@ function clear(){
 }
 
 function drawBackground(offset){
-    image(bg, offset, -140);
-    image(bg, offset+width, -140);
+    image(bg, offset, 0, ww, wh);
+    image(bg, offset+width, 0, ww, wh);
 }
 
 function dis_money() {
@@ -166,18 +181,30 @@ function dis_money() {
     textAlign(RIGHT);
     textStyle(NORMAL);
     textFont("Monospace");
-    text(strMoney(), 50, 8, 637, 30);
-    textStyle(BOLD);
-    textAlign(CENTER);
-    textSize(30);
-    text("$", 280, 4.5, 650, 250);
+    // text(strMoney(), 50, 8, 637, 30);
+    text("$" + strMoney(), 50, 8, ww - 170, 30);
+    // textStyle(BOLD);
+    // textAlign(CENTER);
+    // textSize(30);
+    // text("$", 280, 4.5, ww - 150, 250);
 }
 
+function showRecyclingCenter() {
+
+}
 
 function checkWin() {
-      if (collideRectRect(person.pos.x+12, person.pos.y-65, 30, 65, 6200, height/2, rc.width/4, rc.height/4)){
+  for(var i = 0 ; i < 3 ; i++) {
+    image(rc, 6200*(i+1), wh-rc.height/4, rc.width/4, rc.height/4);
+    if (collideRectRect(person.pos.x+12, person.pos.y-65, 30, 65, 6200*(i+1), height/2, rc.width/4, rc.height/4)){
+      lives = 5;
+      // won = true;
+    }
+    if(person.pos.x > 18600) {
       won = true;
     }
+  }
+
 }
 
 function disBottle() {
@@ -192,7 +219,7 @@ function disBottle() {
 function display_obstacles() {
   var obstacles = [obs1, obs2, obs3, obs4, obs5, obs6, obs7];
   var multiplier = 1;
-  for(var i = 0; i < 6; i++){
+  for(var i = 0; i < 10; i++){
     for(var j = 0; j < 7; j++){
       image(obstacles[j], 400*(multiplier), height-50);
       if (collideRectRect(400*multiplier, (height-50), obstacles[j].width, obstacles[j].height,person.pos.x+12, person.pos.y-65, 30, 65)) {

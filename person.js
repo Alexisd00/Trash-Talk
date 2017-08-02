@@ -1,5 +1,5 @@
 function Person() {
-  this.pos = createVector(50, height-40);
+  this.pos = createVector(50, height);
   this.vel = createVector(5, 0);
   this.acc = createVector(0, 0);
 
