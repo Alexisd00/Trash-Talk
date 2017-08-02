@@ -18,16 +18,6 @@ var heart;
 var eheart;
 var offset;
 
-// var obs = [
-//
-// ]
-// obst1 = {
-//   obs1: 90 40
-// }
-//
-// obst2 = {
-//   obs2:
-// }
 
 function preload() {
   logo = loadImage("logo.png");
@@ -35,8 +25,6 @@ function preload() {
 
   instructions = loadImage("instructions.png");
   plasticBottle = loadImage("waterbottle.png");
-  sc = loadImage("girl.png");
-
   sc = loadImage("original_45x65.png");
   boy = loadImage("boy_45x65.png")
 
@@ -125,12 +113,6 @@ function draw() {
 }
 
 function showLives() {
-  // image(heart, 0,0,30,30)
-  // image(heart,29,0,30,30)
-  // image(heart,58,0,30,30)
-  // image(heart,88,0,30,30)
-  // image(heart,118,0,30,30)
-
   if (lives < 1 ) {
     image(eheart, 0,0,30,30)
   } else {
@@ -228,7 +210,6 @@ function display_obstacles() {
     for(var j = 0; j < 7; j++){
       image(obstacles[j], 400*(multiplier), height-50);
       if (collideRectRect(400*multiplier, (height-50), obstacles[j].width, obstacles[j].height,person.pos.x, person.pos.y-65, 45, 65)) {
-        // image(lose,0,0,845,350);
         if (recentColl == false){
           recentColl = true;
           console.log(recentColl)
@@ -236,7 +217,6 @@ function display_obstacles() {
           window.setTimeout(function(){recentColl = false; }, 1000);
         }
 
-        // return;
       }
       multiplier++;
     }
